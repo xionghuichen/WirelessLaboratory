@@ -29,6 +29,7 @@ class CoderHandler(BaseHandler):
 class DecoderHandler(CoderHandler):
     def __init__(self, *argc, **argkw):
         super(DecoderHandler, self).__init__(*argc, **argkw)
+
     @throw_base_exception
     def post(self):
         """
@@ -59,7 +60,7 @@ class DecoderHandler(CoderHandler):
         # configure the reader  
         scanner.parse_config('enable')
         # obtain image data  
-        path = AP+'static/decoder/'+self._file_name_creator()
+        path = AP+self.servicename+'/'+'static/decoder/'+self._file_name_creator()
         file = open(path,'wb')
         file.write(binary_picture)
         file.close()
@@ -83,7 +84,8 @@ class DecoderHandler(CoderHandler):
 class EncoderHandler(CoderHandler):
     def __init__(self, *argc, **argkw):
         super(EncoderHandler, self).__init__(*argc, **argkw)
-
+    
+    @throw_base_exception
     def post(self):
         """
             information: infomation to encode to 2-D barcode
@@ -122,7 +124,7 @@ class EncoderHandler(CoderHandler):
         )  
         qr.add_data(information)
         qr.make(fit=True)  
-        path = AP+'static/encoder/'+self._file_name_creator()
+        path = AP+self.servicename+'/'+'static/encoder/'+self._file_name_creator()
         img = qr.make_image()  
         img.save(path)  
         with open(path, 'rb') as f:  

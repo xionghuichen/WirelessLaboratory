@@ -34,7 +34,6 @@ class BaseHandler(tornado.web.RequestHandler):
 
     def __init__(self, *argc, **argkw):
         super(BaseHandler, self).__init__(*argc, **argkw)
-        self.servicename='2D_barcode_service'
         para = {} 
 
     @run_on_executor

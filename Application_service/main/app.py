@@ -31,7 +31,7 @@ from sqlalchemy.ext.declarative import declarative_base
 import pymongo
 
 from config.globalVal import AP
-from Handler import Index
+from Handler import Hololens,web
 
 define("port", default=10001, help="run on the given port", type=int)
 define("host", default="139.196.207.155", help="community database host")
@@ -56,7 +56,8 @@ class Application(tornado.web.Application):
         static_path = os.path.join(AP + "static")
         logging.info("start server.")
         version='/v1.0'
-
+        service = '/service'
+        prefix = version+service
         settings = dict(
             cookie_secret=COOKIE_SECRET,
             xsrf_cookies=False,
@@ -66,7 +67,7 @@ class Application(tornado.web.Application):
 
         handlers = [
             # test
-            (r''+version+'/index', Index.IndexPageHandler),
+            (r''+prefix+'/web/index', web.Index.IndexPageHandler),
         ]
 
         tornado.web.Application.__init__(self, handlers, **settings)

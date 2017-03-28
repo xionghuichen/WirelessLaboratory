@@ -12,10 +12,13 @@ import sys
 import os
 reload(sys)
 sys.setdefaultencoding('utf8')
-
 location = str(os.path.abspath(os.path.join(
     os.path.dirname(__file__), os.pardir))) + '/'
 sys.path.append(location)
+location = str(os.path.abspath(os.path.join(os.path.join(
+    os.path.dirname(__file__), os.pardir), os.pardir))) + '/'
+sys.path.append(location)
+
 
 import ConfigParser
 import logging
