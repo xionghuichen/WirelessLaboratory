@@ -9,7 +9,7 @@
 
 # OSSCoreModel.py
 import logging
-from BaseCoreModel import BaseCoreModel
+import oss2
 import time
 class OSSCoreModel(object):
     def __init__(self, *argc, **argkw):
@@ -19,7 +19,7 @@ class OSSCoreModel(object):
         self.endpoint = argkw['endpoint']
 
     def register_bucket(self,bucket_name):
-        self.ali_bucket = oss2.Bucket(auth, endpoint, bucket_name)
+        self.ali_bucket = oss2.Bucket(self.auth, self.endpoint, bucket_name)
 
     def upload_resrouce(self,key,binary_picture):
         """Upload single picture to OSS databases.

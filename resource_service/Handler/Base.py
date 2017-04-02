@@ -24,6 +24,7 @@ from concurrent.futures import ThreadPoolExecutor
 import json
 from bson import ObjectId
 from config.globalVal import MAX_WORKERS
+from resource_service.Model.OSSCoreModel import OSSCoreModel
 from _exceptions.http_error import MyMissingArgumentError
 
 def throw_base_exception(method):
@@ -47,7 +48,6 @@ class BaseHandler(tornado.web.RequestHandler):
         super(BaseHandler, self).__init__(*argc, **argkw)
         para = {} 
         para['ali_service'] = self.application.ali_service
-        para['ali_bucket'] = self.application.ali_bucket
         para['auth'] = self.application.auth
         para['endpoint'] = self.application.endpoint
         self._picture_model = OSSCoreModel(**para)

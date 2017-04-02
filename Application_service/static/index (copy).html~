@@ -1,14 +1,10 @@
 <!DOCTYPE html>
 <html>
    <head>
-      <title>Bootstrap 模板</title>
+      <title>hololens</title>
       <meta name="viewport" content="width=device-width, initial-scale=1.0">
       <!-- 引入 Bootstrap -->
       <link href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
-        <style type='text/css'>
-         .jumbotron{background: url( '{{static_url('img/hololens.png')}}') no-repeat 4px 5px }
-/*         .jumbotron{background-size:80px 60px;}*/
-         </style>
  
       <!-- HTML5 Shim 和 Respond.js 用于让 IE8 支持 HTML5元素和媒体查询 -->
       <!-- 注意： 如果通过 file://  引入 Respond.js 文件，则该文件无法起效果 -->
@@ -85,7 +81,7 @@
                                  </ol>
                                  <div class="carousel-inner">
                                     <div class="item">
-                                       <img alt="" src="{{static_url('img/community.png')}}" />
+                                       <img alt="" src="img/community.png" />
                                        <div class="carousel-caption">
                                           <h4>
                                              虚拟小区;动态交互
@@ -99,7 +95,7 @@
                                        </div>
                                     </div>
                                     <div class="item active">
-                                       <img alt="" src="{{static_url('img/hololens.png')}}" />
+                                       <img alt="" src="img/hololens.png" />
                                        <div class="carousel-caption">
                                           <h4>
                                              Hololens——微软最强黑科技助力
@@ -117,8 +113,7 @@
                   </div>
                </div>
            </div>
-            <div class="jumbotron" ">
-
+            <div class="jumbotron" style="background-image:'img/hololens.png">
                <h1>
                   给你未来入驻的生活直观体验
                </h1>
@@ -140,6 +135,6 @@
       <!-- jQuery (Bootstrap 的 JavaScript 插件需要引入 jQuery) -->
       <script src="https://code.jquery.com/jquery.js"></script>
       <!-- 包括所有已编译的插件 -->
-      <script src="{{static_url('js/bootstrap.min.js')}}"></script>
+      <script src="js/bootstrap.min.js"></script>
    </body>
 </html>

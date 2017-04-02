@@ -13,10 +13,13 @@ import sys
 import os
 reload(sys)
 sys.setdefaultencoding('utf8')
-
 location = str(os.path.abspath(os.path.join(
     os.path.dirname(__file__), os.pardir))) + '/'
 sys.path.append(location)
+location = str(os.path.abspath(os.path.join(os.path.join(
+    os.path.dirname(__file__), os.pardir), os.pardir))) + '/'
+sys.path.append(location)
+
 
 import ConfigParser
 import logging
@@ -28,7 +31,8 @@ import tornado.httpserver
 import tornado.ioloop
 from tornado.options import define, options
 
-from Handler import *
+from config.globalVal import AP
+from Handler import Project, Index
 
 define("port", default=10000, help="run on the given port", type=int)
 define("host", default="139.196.207.155", help="community database host")
@@ -53,20 +57,19 @@ class Application(tornado.web.Application):
         template_path = os.path.join(AP + "templates")
         static_path = os.path.join(AP + "static")
         logging.info("start server.")
-        version='/v1.0'
-
+        version=config.get("app","RESOURCE_VERSION")
+        service = config.get("app","RESOURCE_NAME")
+        prefix = version+service
         settings = dict(
-            cookie_secret=COOKIE_SECRET,
             xsrf_cookies=False,
-            template_path=template_path,
-            static_path=static_path
         )
 
         handlers = [
             # test
-            (r''+version+'/', IndexHandler),
-            (r''+version+'/appmodel/post',APPModel.UploadHandler),
 
+            (r''+prefix+'/',Index.IndexHandler),
+            (r''+prefix+'/project/post',Project.UploadHandler),
+            (r''+prefix+'/project/get',Project.GetUrlHandler),
 
         ]
 
@@ -75,7 +78,7 @@ class Application(tornado.web.Application):
         self.auth = oss2.Auth(ALIYUN_KEY,ALIYUN_SECRET)
         logging.info('connecting to oss in ali yun...')
         self.endpoint = r'http://oss-cn-shanghai.aliyuncs.com'
-        bucket_name = 'cloudeye'
+        bucket_name = 'imgcuphololens'
         self.ali_service = oss2.Service(self.auth, self.endpoint)
         logging.info("start completed..")
         

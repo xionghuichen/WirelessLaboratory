@@ -13,7 +13,7 @@ import tornado.gen
 import tornado.httpclient
 from tornado.concurrent import run_on_executor
 from concurrent.futures import ThreadPoolExecutor
-from config.globalVal import MAX_WORKERS
+# from config.globalVal import MAX_WORKERS
 
 def throw_base_exception(method):
     """This is a decorator to handler all of common exception in this App
@@ -30,15 +30,15 @@ def throw_base_exception(method):
     
 
 class BaseHandler(tornado.web.RequestHandler):
-    executor = ThreadPoolExecutor(max_workers=MAX_WORKERS)
+    # executor = ThreadPoolExecutor(max_workers=MAX_WORKERS)
 
     def __init__(self, *argc, **argkw):
         super(BaseHandler, self).__init__(*argc, **argkw)
         para = {} 
 
-    @run_on_executor
-    def background_task(self,function,*argc):
-        return function(*argc)
+    # @run_on_executor
+    # def background_task(self,function,*argc):
+    #     return function(*argc)
 
     def change_custom_string_to_json(self, dic):
         pass

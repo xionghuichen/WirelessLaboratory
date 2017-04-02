@@ -15,6 +15,10 @@ location = str(os.path.abspath(os.path.join(
     os.path.dirname(__file__), os.pardir))) + '/'
 sys.path.append(location)
 
+location = str(os.path.abspath(os.path.join(os.path.join(
+    os.path.dirname(__file__), os.pardir), os.pardir))) + '/'
+sys.path.append(location)
+
 import ConfigParser
 import logging
 import oss2
@@ -31,17 +35,18 @@ from sqlalchemy.ext.declarative import declarative_base
 import pymongo
 
 from config.globalVal import AP
-from Handler import Hololens,web
+from Handler.web import Index, MainPage
+from Handler.Hololens import Recognize
 
 define("port", default=10001, help="run on the given port", type=int)
 define("host", default="139.196.207.155", help="community database host")
 define("mysql_database", default="cloudeye",
        help="community database name")
 define("mysql_user", default="root", help="community mysql user")
-define("mysql_password", default="",
+define("mysql_password", default="zp19950310",
        help="community database password")
 define("mongo_user",default="burningbear", help="community mongodb  user")
-define("mongo_password",default='',help="commuity mongodb password")
+define("mongo_password",default='zp19950310',help="commuity mongodb password")
 logging.basicConfig(level=logging.INFO)
                     #filename='log.log',
                     #filemode='w')
@@ -54,20 +59,23 @@ class Application(tornado.web.Application):
         COOKIE_SECRET = config.get("app", "COOKIE_SECRET")
         template_path = os.path.join(AP + "templates")
         static_path = os.path.join(AP + "static")
+
         logging.info("start server.")
-        version='/v1.0'
-        service = '/service'
+        version= config.get("app", "APPLICATION_VERSION")
+        service = config.get("app", "APPLICATION_NAME")
         prefix = version+service
         settings = dict(
             cookie_secret=COOKIE_SECRET,
             xsrf_cookies=False,
             template_path=template_path,
-            static_path=static_pathd
+            static_path=static_path
         )
 
         handlers = [
             # test
-            (r''+prefix+'/web/index', web.Index.IndexPageHandler),
+            (r''+prefix+'/web/index', Index.IndexPageHandler),
+            (r''+prefix+'/web/main',MainPage.IndexHandler),
+            (r''+prefix+'/hololens/upload',Recognize.UploadHandler)
         ]
 
         tornado.web.Application.__init__(self, handlers, **settings)
@@ -89,13 +97,21 @@ class Application(tornado.web.Application):
         self.mongodb = client.cloudeye
         # bind face++ cloud service
         logging.info("connect mongodb successfully..")
+        # bind micro service
+        self.varcode_service_url = '127.0.0.1:'+config.get("app","BARCODE_PORT")+config.get("app","BARCODE_VERSION")+config.get("app","BARCODE_NAME")
+        self.resource_service_url = '127.0.0.1:'+config.get("app","RESOURCE_PORT")+config.get("app","RESOURCE_VERSION")+config.get("app","RESOURCE_NAME")
+        logging.info("varcode url is %s"%self.varcode_service_url)
+        logging.info("resource url is %s"%self.resource_service_url)
         # bind ali cloud service
         logging.info("start completed..")
         
 def main():
+    config = ConfigParser.ConfigParser()
+    config.readfp(open(AP + "config/config.ini"))
+    port = config.get("app", "APPLICATION_PORT")
     tornado.options.parse_command_line()
     http_server = tornado.httpserver.HTTPServer(Application())
-    http_server.listen(options.port)
+    http_server.listen(port)
     tornado.ioloop.IOLoop.instance().start()
 
 if __name__ == "__main__":
