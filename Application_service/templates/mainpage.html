@@ -98,10 +98,12 @@
              processData: false,
              contentType: false,
              success: function(data) {
-                 alert("上传成功");
-                 // $("#imgDiv").empty();
-                 // $("#imgDiv").html(data);
-                 // $("#imgDiv").show();
+                 // alert("上传成功");
+                 if (data.code=='0')
+                 {
+                 alert(JSON.stringify(data.data));
+                    $("img#result").attr('src',data.data.url); 
+                 }
              },
              error: function(XMLHttpRequest, textStatus, errorThrown) {
                  alert("上传失败，请检查网络后重试");

@@ -57,9 +57,6 @@ class BaseHandler(tornado.web.RequestHandler):
     @property
     def picture_model(self):
         return self._picture_model
-    
-    def __del__(self):
-        self.session.close()
 
     @run_on_executor
     def background_task(self,function,*argc):

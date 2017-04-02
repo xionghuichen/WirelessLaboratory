@@ -35,6 +35,8 @@ class BaseHandler(tornado.web.RequestHandler):
     def __init__(self, *argc, **argkw):
         super(BaseHandler, self).__init__(*argc, **argkw)
         para = {} 
+        self.barcode_service = self.application.barcode_service_url
+        self.resource_service = self.application.resource_service_url
 
     # @run_on_executor
     # def background_task(self,function,*argc):
@@ -78,4 +80,18 @@ class BaseHandler(tornado.web.RequestHandler):
         temp_json.replace("null", "\'empty\'")
         self.write(temp_json)
 
-
+    @tornado.gen.coroutine
+    def requester(self,url,data):
+        body = urllib.urlencode(data)
+        request = tornado.httpclient.HTTPRequest(
+            url=url,
+            method='POST',
+            body=body
+        )
+        # logging.info("requester body is %s"%request.body)
+        # logging.info("requester url is %s"%request.url)
+        client = tornado.httpclient.AsyncHTTPClient()
+        response = yield tornado.gen.Task(client.fetch,request)
+        logging.info(response.body)
+        body = json.loads(response.body)
+        raise tornado.gen.Return(body)

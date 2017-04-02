@@ -18,7 +18,7 @@ import base64
 import time
 import datetime
 import Image
-prefix ="http://127.0.0.1:10000/v1.0/resource"
+prefix ="http://127.0.0.1:10002/v1.0/resource"
 # prefix = "http://127.0.0.1:9000"
 cj = cookielib.CookieJar()
 opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))

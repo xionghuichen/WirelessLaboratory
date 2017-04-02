@@ -34,7 +34,6 @@ from tornado.options import define, options
 from config.globalVal import AP
 from Handler import Project, Index
 
-define("port", default=10000, help="run on the given port", type=int)
 define("host", default="139.196.207.155", help="community database host")
 define("mysql_database", default="cloudeye",
        help="community database name")
@@ -83,9 +82,12 @@ class Application(tornado.web.Application):
         logging.info("start completed..")
         
 def main():
+    config = ConfigParser.ConfigParser()
+    config.readfp(open(AP + "config/config.ini"))
+    port = config.get("app","RESOURCE_PORT")
     tornado.options.parse_command_line()
     http_server = tornado.httpserver.HTTPServer(Application())
-    http_server.listen(options.port)
+    http_server.listen(port)
     tornado.ioloop.IOLoop.instance().start()
 
 if __name__ == "__main__":

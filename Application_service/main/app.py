@@ -35,8 +35,11 @@ from sqlalchemy.ext.declarative import declarative_base
 import pymongo
 
 from config.globalVal import AP
+service_path = AP+'Application_service/'
+
 from Handler.web import Index, MainPage
 from Handler.Hololens import Recognize
+
 
 define("port", default=10001, help="run on the given port", type=int)
 define("host", default="139.196.207.155", help="community database host")
@@ -57,8 +60,9 @@ class Application(tornado.web.Application):
         config = ConfigParser.ConfigParser()
         config.readfp(open(AP + "config/config.ini"))
         COOKIE_SECRET = config.get("app", "COOKIE_SECRET")
-        template_path = os.path.join(AP + "templates")
-        static_path = os.path.join(AP + "static")
+        logging.info("ap is %s"%service_path)
+        template_path = os.path.join(service_path + "templates")
+        static_path = os.path.join(service_path + "static")
 
         logging.info("start server.")
         version= config.get("app", "APPLICATION_VERSION")
@@ -98,9 +102,9 @@ class Application(tornado.web.Application):
         # bind face++ cloud service
         logging.info("connect mongodb successfully..")
         # bind micro service
-        self.varcode_service_url = '127.0.0.1:'+config.get("app","BARCODE_PORT")+config.get("app","BARCODE_VERSION")+config.get("app","BARCODE_NAME")
-        self.resource_service_url = '127.0.0.1:'+config.get("app","RESOURCE_PORT")+config.get("app","RESOURCE_VERSION")+config.get("app","RESOURCE_NAME")
-        logging.info("varcode url is %s"%self.varcode_service_url)
+        self.barcode_service_url = 'http://127.0.0.1:'+config.get("app","BARCODE_PORT")+config.get("app","BARCODE_VERSION")+config.get("app","BARCODE_NAME")
+        self.resource_service_url = 'http://127.0.0.1:'+config.get("app","RESOURCE_PORT")+config.get("app","RESOURCE_VERSION")+config.get("app","RESOURCE_NAME")
+        logging.info("varcode url is %s"%self.barcode_service_url)
         logging.info("resource url is %s"%self.resource_service_url)
         # bind ali cloud service
         logging.info("start completed..")
