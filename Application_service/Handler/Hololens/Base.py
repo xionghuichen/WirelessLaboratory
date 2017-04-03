@@ -92,6 +92,6 @@ class BaseHandler(tornado.web.RequestHandler):
         # logging.info("requester url is %s"%request.url)
         client = tornado.httpclient.AsyncHTTPClient()
         response = yield tornado.gen.Task(client.fetch,request)
-        logging.info(response.body)
+        logging.info("response.body is %s"%response.body)
         body = json.loads(response.body)
         raise tornado.gen.Return(body)

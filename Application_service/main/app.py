@@ -38,7 +38,7 @@ from config.globalVal import AP
 service_path = AP+'Application_service/'
 
 from Handler.web import Index, MainPage
-from Handler.Hololens import Recognize
+from Handler.Hololens import Recognize, IndexTest
 
 
 define("port", default=10001, help="run on the given port", type=int)
@@ -77,28 +77,31 @@ class Application(tornado.web.Application):
 
         handlers = [
             # test
+            (r''+prefix+'/',IndexTest.IndexHandler),
             (r''+prefix+'/web/index', Index.IndexPageHandler),
             (r''+prefix+'/web/main',MainPage.IndexHandler),
-            (r''+prefix+'/hololens/upload',Recognize.UploadHandler)
+            (r''+prefix+'/hololens/upload',Recognize.UploadHandler),
+            (r''+prefix+'/hololens/detect',Recognize.DetectHandler)
         ]
 
         tornado.web.Application.__init__(self, handlers, **settings)
         # use SQLachemy to connection to mysql.
-        DB_CONNECT_STRING = 'mysql+mysqldb://%s:%s@%s/%s?charset=utf8'%(options.mysql_user, options.mysql_password, options.host, options.mysql_database)
-        engine = create_engine(DB_CONNECT_STRING, echo=False,pool_size=1000)
-        self.sqldb = sessionmaker(
-                bind=engine,
-                autocommit=False, 
-                autoflush=True,
-                expire_on_commit=False)
-        base_model = declarative_base()
-        # create all of model inherit from BaseModel 
-        base_model.metadata.create_all(engine) 
+        logging.info("connect mysql ..")
+        # DB_CONNECT_STRING = 'mysql+mysqldb://%s:%s@%s/%s?charset=utf8'%(options.mysql_user, options.mysql_password, options.host, options.mysql_database)
+        # engine = create_engine(DB_CONNECT_STRING, echo=False,pool_size=1000)
+        # self.sqldb = sessionmaker(
+        #         bind=engine,
+        #         autocommit=False, 
+        #         autoflush=True,
+        #         expire_on_commit=False)
+        # base_model = declarative_base()
+        # # create all of model inherit from BaseModel 
+        # base_model.metadata.create_all(engine) 
         # use pymongo to connectino to mongodb
         logging.info("connect mongodb ..")
-        client = pymongo.MongoClient(options.host,27017)
-        client.cloudeye.authenticate(options.mongo_user,options.mongo_password)
-        self.mongodb = client.cloudeye
+        # client = pymongo.MongoClient(options.host,27017)
+        # client.cloudeye.authenticate(options.mongo_user,options.mongo_password)
+        # self.mongodb = client.cloudeye
         # bind face++ cloud service
         logging.info("connect mongodb successfully..")
         # bind micro service

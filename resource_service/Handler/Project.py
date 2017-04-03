@@ -24,8 +24,8 @@ class UploadHandler(ProjectHandler):
     def __init__(self,*argc, **argkw):
         super(UploadHandler, self).__init__(*argc, **argkw)
 
-    def _gen_key(self, user_id,pro_id):
-        return str(user_id)+':'+str(pro_id) + str(datetime.datetime.now())+'.png'
+    def _gen_key(self, user_id,pro_id,filename):
+        return str(user_id)+':'+str(pro_id) + str(datetime.datetime.now())+str(filename)
 
     @tornado.web.asynchronous
     @tornado.gen.coroutine
@@ -43,13 +43,14 @@ class UploadHandler(ProjectHandler):
         user_id = self.get_argument('user_id')
         pro_id = self.get_argument('pro_id')
         file = self.get_argument('file')
+        name = self.get_argument('filename')
         logging.info("file %s"%file)
         try:
             binary_picture = base64.b64decode(file)
         except TypeError as e:
             raise ArgumentTypeError('upload project picture')
 
-        key = self._gen_key(user_id,pro_id)
+        key = self._gen_key(user_id,pro_id,name)
         if self._picture_model.upload_resrouce(key,binary_picture):
             result.code = 0
             result.data = {'key':key}

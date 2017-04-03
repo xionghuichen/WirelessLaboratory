@@ -17,8 +17,8 @@ import hashlib
 import base64
 import time
 import datetime
-prefix ="http://127.0.0.1:10002/v1.0/barcode"
-# prefix = "http://127.0.0.1:9000"
+prefix ="http://127.0.0.1:10001/v1.0/service"
+# prefix = "http://139.196.207.155:10001/v1.0/service"
 cj = cookielib.CookieJar()
 opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
 urllib2.install_opener(opener)
@@ -47,46 +47,22 @@ def set_resquest(api,data,method):
     request.get_method = lambda: method # or 'DELETE' 
     return request
 
-def encode(data):
-    # data = {
-    #     "information":"15195861111",
-    # }
-    req = set_resquest("/encode",data,"POST")
+def detect(data):
+    req = set_resquest("/hololens/detect",data,"POST")
     response = urllib2.urlopen(req)
     the_page = response.read()
     return the_page
 
-def decode(data):
-    # data = {
-    #     'picture_base64':''
-    # }
-    req = set_resquest("/decode",data,"POST")
-    response = urllib2.urlopen(req)
-    the_page = response.read()
-    return the_page
-
-def test_encode():
-    data = {
-        'information':"hello",
-    }
-    data = encode(data)
-    data =  eval(data)
-    bin_pic = base64.b64decode(data['data']['pic'])
-    print bin_pic
-    file = open('encoder.png','wb')
-    file.write(bin_pic)
-
-
-def test_decode():
-    with open('encoder.png','rb') as f:
+def test_detect():
+    with open('key2.png','rb') as f:
         content = f.read()
         b64 = base64.b64encode(content)
         data = {
-            'picture_base64':b64,
+            'b64_pic':b64,
         }
-        result = decode(data)
+        result = detect(data)
         print result
 
 if __name__ == '__main__':
-    test_encode()
-    test_decode()
+
+    print test_detect()

@@ -18,7 +18,12 @@ import time
 import logging
 import urllib
 import base64
+
+
 class UploadHandler(BaseHandler):
+    def __init__(self, *argc, **argkw):
+        super(UploadHandler, self).__init__(*argc, **argkw)
+
     @tornado.web.asynchronous
     @tornado.gen.engine
     def post(self):
@@ -30,14 +35,43 @@ class UploadHandler(BaseHandler):
         # file = self.get_argument('file')
         for meta in file_metas:
             binary = meta['body']
-
+            name = meta['filename']
         data = {
             'user_id':'1',
             'pro_id':'1',
-            'file':base64.b64encode(binary)
+            'file':base64.b64encode(binary),
+            'filename':name
         }
-        res =yield self.requester(self.resource_service+'/project/post',data)
-        res = yield self.requester(self.resource_service+'/project/get',{'key':res['data']['key']})
+        logging.info("file name is %s"%name)
+        # get oss key from object
+        res = yield self.requester(self.resource_service+'/project/post',data)
+        # get oss key from barcode picture
+        res2 = yield self.requester(self.barcode_service+'/encode',{'information':res['data']['key'],'user_id':'1','pro_id':'1','filename':name})
+        # get url from key.
+        res = yield self.requester(self.resource_service+'/project/get',{'key':res2['data']['key']})
         # logging.info("response")
+        self.write(res)
+        self.finish()
+
+class DetectHandler(BaseHandler):
+    """docstring for DetectHandler"""
+    def __init__(self, *argc, **argkw):
+        super(DetectHandler, self).__init__(*argc, **argkw)
+    
+    @tornado.web.asynchronous
+    @tornado.gen.engine
+    def post(self):
+        b64_pic = self.get_argument('b64_pic')
+        if b64_pic == '':
+            raise ArgumentTypeError("empty picture_base64")
+        try:
+            binary_picture = base64.b64decode(b64_pic)
+        except TypeError as e:
+            raise ArgumentTypeError('error change type : picture_base64')
+
+        res2 = yield self.requester(self.barcode_service+'/decode',{'picture_base64':b64_pic})
+        key = res2['data']['info']
+        # get url from key.
+        res = yield self.requester(self.resource_service+'/project/get',{'key':key})
         self.write(res)
         self.finish()

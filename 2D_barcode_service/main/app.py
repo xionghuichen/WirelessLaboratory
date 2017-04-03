@@ -33,7 +33,6 @@ from tornado.options import define, options
 from Handler import CoderHandler,Index
 from config.globalVal import AP
 
-define("port", default=10002, help="run on the given port", type=int)
 define("host", default="139.196.207.155", help="community database host")
 logging.basicConfig(level=logging.INFO)
                     #filename='log.log',
@@ -45,8 +44,8 @@ class Application(tornado.web.Application):
         config = ConfigParser.ConfigParser()
         config.readfp(open(AP + "config/config.ini"))
         logging.info("start server...")
-        version='/v1.0'
-        service = '/barcode'
+        version = config.get('app','BARCODE_VERSION')
+        service = config.get('app','BARCODE_NAME')
         prefix = version+service
         template_path = os.path.join(AP + "templates")
         static_path = os.path.join(AP + "static")
@@ -62,12 +61,16 @@ class Application(tornado.web.Application):
             (r''+prefix+'/decode',CoderHandler.DecoderHandler),
         ]
         tornado.web.Application.__init__(self, handlers, **settings)
+        self.resource_service_url = 'http://127.0.0.1:'+config.get("app","RESOURCE_PORT")+config.get("app","RESOURCE_VERSION")+config.get("app","RESOURCE_NAME")
+
         logging.info("start completed.")
         
 def main():
+    config = ConfigParser.ConfigParser()
+    config.readfp(open(AP + "config/config.ini"))
     tornado.options.parse_command_line()
     http_server = tornado.httpserver.HTTPServer(Application())
-    http_server.listen(options.port)
+    http_server.listen(config.get('app','BARCODE_PORT'))
     tornado.ioloop.IOLoop.instance().start()
 
 if __name__ == "__main__":

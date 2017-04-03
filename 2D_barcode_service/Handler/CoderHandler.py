@@ -13,6 +13,7 @@ import datetime
 import qrcode  # 导入模块  
 import logging
 import tornado.web
+import tornado.gen
 import os
 
 from config.globalVal import ReturnStruct, AP
@@ -45,7 +46,10 @@ class DecoderHandler(CoderHandler):
             binary_picture = base64.b64decode(pic)
         except TypeError as e:
             raise ArgumentTypeError('error change type : picture_base64')
-        result.data['info'] = self._decoder(binary_picture)
+        try:
+            result.data['info'] = self._decoder(binary_picture)
+        except Exception as e:
+            raise ArgumentTypeError('decode failed: ,message %s'%str(e))
         self.return_to_client(result)
         self.finish()
 
@@ -85,12 +89,17 @@ class EncoderHandler(CoderHandler):
     def __init__(self, *argc, **argkw):
         super(EncoderHandler, self).__init__(*argc, **argkw)
     
-    @throw_base_exception
+    @tornado.web.asynchronous
+    @tornado.gen.engine
     def post(self):
         """
             information: infomation to encode to 2-D barcode
         """
+        logging.info("in there1")
         information = self.get_argument("information")
+        user_id = self.get_argument('user_id')
+        pro_id = self.get_argument('pro_id')
+
         logging.info("in there")
         result = ReturnStruct()
         try:
@@ -101,9 +110,19 @@ class EncoderHandler(CoderHandler):
         
         try:
             logging.info("before encoder.")
-            result.data['pic'] = self._encoder(information)
+            binary = self._encoder(information)
+            data = {
+                'user_id':user_id,
+                'pro_id':pro_id,
+                'file':base64.b64encode(binary),
+                'filename':'.png'
+            }
+            res = yield self.requester(self.resource_service+'/project/post',data)
+            result.data['key']=res['data']['key']
         except Exception as e:
             raise InnerError(str(e)+"in encoder")
+
+
         self.return_to_client(result)
         self.finish()
 
@@ -128,6 +147,6 @@ class EncoderHandler(CoderHandler):
         img = qr.make_image()  
         img.save(path)  
         with open(path, 'rb') as f:  
-            content = base64.b64encode(f.read())
+            content = f.read()
             os.remove(path)
             return content
