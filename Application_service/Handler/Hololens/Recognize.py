@@ -36,18 +36,22 @@ class UploadHandler(BaseHandler):
         for meta in file_metas:
             binary = meta['body']
             name = meta['filename']
+        logging.info("in get b64 encode")
         data = {
             'user_id':'1',
             'pro_id':'1',
             'file':base64.b64encode(binary),
             'filename':name
         }
-        logging.info("file name is %s"%name)
+        logging.info("in get oss key")
         # get oss key from object
-        res = yield self.requester(self.resource_service+'/project/post',data)
+        res = self.big_requester(self.resource_service+'/project/post',data)
+        # res = yield self.requester(self.resource_service+'/project/post',data)
         # get oss key from barcode picture
+        logging.info("in bracode pirc")
         res2 = yield self.requester(self.barcode_service+'/encode',{'information':res['data']['key'],'user_id':'1','pro_id':'1','filename':name})
         # get url from key.
+        logging.info("in get url")
         res = yield self.requester(self.resource_service+'/project/get',{'key':res2['data']['key']})
         # logging.info("response")
         self.write(res)

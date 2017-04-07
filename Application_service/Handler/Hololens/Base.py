@@ -8,6 +8,7 @@ import functools
 import logging
 import json
 import urllib
+import requests
 import tornado.web
 import tornado.gen
 import tornado.httpclient
@@ -95,3 +96,11 @@ class BaseHandler(tornado.web.RequestHandler):
         logging.info("response.body is %s"%response.body)
         body = json.loads(response.body)
         raise tornado.gen.Return(body)
+
+    def big_requester(self,url,data):
+        res = requests.post(url, params=data)
+        logging.info(res.text)
+        logging.info("res type %s"%type(res.text))
+        j = json.loads(res.text)
+        logging.info(j['data']['key'])
+        return  j

@@ -17,8 +17,8 @@ import hashlib
 import base64
 import time
 import datetime
-prefix ="http://127.0.0.1:10001/v1.0/service"
-# prefix = "http://139.196.207.155:10001/v1.0/service"
+# prefix ="http://127.0.0.1:10001/v1.0/service"
+prefix = "http://139.196.207.155:10001/v1.0/service"
 cj = cookielib.CookieJar()
 opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
 urllib2.install_opener(opener)
@@ -54,7 +54,7 @@ def detect(data):
     return the_page
 
 def test_detect():
-    with open('key2.png','rb') as f:
+    with open('key3.png','rb') as f:
         content = f.read()
         b64 = base64.b64encode(content)
         data = {
@@ -64,5 +64,4 @@ def test_detect():
         print result
 
 if __name__ == '__main__':
-
-    print test_detect()
+    test_detect()

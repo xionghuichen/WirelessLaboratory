@@ -44,18 +44,19 @@ class UploadHandler(ProjectHandler):
         pro_id = self.get_argument('pro_id')
         file = self.get_argument('file')
         name = self.get_argument('filename')
-        logging.info("file %s"%file)
+        logging.info("in encoding")
         try:
             binary_picture = base64.b64decode(file)
         except TypeError as e:
             raise ArgumentTypeError('upload project picture')
-
+        logging.info("in uploading resource...")
         key = self._gen_key(user_id,pro_id,name)
         if self._picture_model.upload_resrouce(key,binary_picture):
             result.code = 0
             result.data = {'key':key}
         else:
             result.code = 1
+        logging.info("after upload. result code is %s "%result.code)
         self.return_to_client(result)
         self.finish()
 

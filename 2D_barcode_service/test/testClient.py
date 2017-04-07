@@ -18,7 +18,7 @@ import base64
 import time
 import datetime
 prefix ="http://127.0.0.1:10000/v1.0/barcode"
-# prefix = "http://127.0.0.1:9000"
+# prefix ="http://139.196.207.155:10000/v1.0/barcode"
 cj = cookielib.CookieJar()
 opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
 urllib2.install_opener(opener)
@@ -67,9 +67,9 @@ def decode(data):
 
 def test_encode():
     data = {
-        'information':"hello",
-        'user_id':'1',
-        'pro_id':'1'
+        'information':"2",
+        'user_id':'',
+        'pro_id':''
     }
     data = encode(data)
     data =  eval(data)
@@ -81,18 +81,19 @@ def test_encode():
 
 
 def test_decode():
-    with open('encoder.jpg','rb') as f:
+    with open('encoder3.jpg','rb') as f:
         content = f.read()
         b64 = base64.b64encode(content)
         data = {
             'picture_base64':b64,
+            'just_info':1
         }
         result = decode(data)
         print result
 
 if __name__ == '__main__':
-    test_encode()
-    # test_decode()
+    # test_encode()
+    test_decode()
     # with open('encoder4.png','rb') as f:
     #     content = f.read()
     #     b64 = base64.b64encode(content)

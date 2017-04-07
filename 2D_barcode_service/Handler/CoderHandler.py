@@ -70,11 +70,22 @@ class DecoderHandler(CoderHandler):
         file.close()
         pil = Image.open(path).convert('L') 
         width, height = pil.size  
+        logging.info("w is %s, h is %s"%(width,height))
+        result_width= 290
+        if width > 290:
+            height = int(height/(width/result_width))
+            width = result_width
+            print str(height)
+            print str(width)
+            logging.info("before resize w is %s, height is %s"%(width,height))
+            pil = pil.resize((width,height),Image.ANTIALIAS)
+        logging.info("after resize, w is %s, height is %s"%(width, height))
         raw = pil.tostring()  
         # wrap image data  
         image = zbar.Image(width, height, 'Y800', raw)  
         # scan the image for barcodes  
         scanner.scan(image)  
+
         # extract results
         result = ''
         for symbol in image:  
