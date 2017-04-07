@@ -29,7 +29,8 @@ class UploadHandler(BaseHandler):
     def post(self):
         #usernmae = self.get_argument("username")
         file_metas=self.request.files['image']   #提取表单中‘name’为‘file’的文件元数据
-        binaty =''
+        logging.info("in recognize, upload is %s"%self.request)
+	binaty =''
         # user_id = self.get_argument('user_id')
         # pro_id = self.get_argument('pro_id')
         # file = self.get_argument('file')
@@ -77,5 +78,6 @@ class DetectHandler(BaseHandler):
         key = res2['data']['info']
         # get url from key.
         res = yield self.requester(self.resource_service+'/project/get',{'key':key})
-        self.write(res)
+        self.write(res['data']['url'])
+	# self.write(res)
         self.finish()

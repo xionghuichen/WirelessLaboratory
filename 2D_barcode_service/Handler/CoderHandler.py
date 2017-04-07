@@ -50,7 +50,15 @@ class DecoderHandler(CoderHandler):
             result.data['info'] = self._decoder(binary_picture)
         except Exception as e:
             raise ArgumentTypeError('decode failed: ,message %s'%str(e))
-        self.return_to_client(result)
+        just_info = '0'
+        try:
+            just_info = self.get_argument('just_info')
+        except Exception as e:
+            logging.info("exception is %s"%str(e))
+        if just_info == '1':
+            self.write(result.data['info'])
+        else:
+	    self.return_to_client(result)
         self.finish()
 
     def _decoder(self,binary_picture):

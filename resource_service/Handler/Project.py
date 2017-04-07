@@ -44,7 +44,6 @@ class UploadHandler(ProjectHandler):
         pro_id = self.get_argument('pro_id')
         file = self.get_argument('file')
         name = self.get_argument('filename')
-        logging.info("in encoding")
         try:
             binary_picture = base64.b64decode(file)
         except TypeError as e:
