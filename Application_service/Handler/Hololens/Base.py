@@ -98,7 +98,9 @@ class BaseHandler(tornado.web.RequestHandler):
         raise tornado.gen.Return(body)
 
     def big_requester(self,url,data):
+        logging.info("[baseHandler.big_requester] before request")
         res = requests.post(url, params=data)
+        logging.info("[baseHandler.big_requester] before request")
         logging.info(res.text)
         logging.info("res type %s"%type(res.text))
         j = json.loads(res.text)

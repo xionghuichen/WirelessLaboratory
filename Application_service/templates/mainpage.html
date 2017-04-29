@@ -55,52 +55,10 @@
                   </div>
                   <input type="button" id="btnUpload" value="确定" onclick="uploadImage()" />
                </form> -->
-          <p>选择您要识别的类型... </p>
-          <div class="panel-group" id="panel-5888">
-              <div class="panel panel-default">
-                <div class="panel-heading">
-                   <a class="panel-title" data-toggle="collapse" data-parent="#panel-5888" href="#panel-element-504322">AR 居家</a>
-                </div>
+  <p>Please upload the model you want to display in Hololens.</p>
 
-                <div id="panel-element-504322" class="panel-collapse in">
-                  <div class="panel-body">
-                      <button id="g1_b1" >即刻装潢</button>
-                  </div>
-                </div>
-                <div id="panel-element-504322" class="panel-collapse in">
-                  <div class="panel-body">
-                     <button id="g1_b2" >自定义家具</button>
-                  </div>
-                </div>
-
-                <div id="panel-element-504322" class="panel-collapse in">
-                  <div class="panel-body">
-                     更多功能，敬请期待......
-                  </div>
-                </div>
-
-              </div>
-              <div class="panel panel-default">
-                <div class="panel-heading">
-                   <a class="panel-title collapsed" data-toggle="collapse" data-parent="#panel-5888" href="#panel-element-89685">AR小区</a>
-                </div>
-                <div id="panel-element-89685" class="panel-collapse collapse">
-                  <div class="panel-body">
-                    交互式看房体验
-                  </div>
-                </div>
-                <div id="panel-element-504322" class="panel-collapse in">
-                  <div class="panel-body">
-                     更多功能，敬请期待......
-                  </div>
-                </div>
-
-              </div>
-            </div>
             <form id="uploadForm" enctype="multipart/form-data">
-                <p>请上传你的对应模型</p>
-                <input id="file" type="file" name="image"/>
-                <p>     </p>
+		<input id="file" type="file" name="image"/>
                 <button id="upload" type="button" onclick="uploadImage()">upload</button>
             </form>
                   
@@ -110,8 +68,7 @@
                   <div class="col-md-2 column">
                   </div>
                   <div class="col-md-6 column">
-                      <p id ='ptochange'>上传成功后，这里将会显示用于识别的二维码</p>>
-                     <img  id="result"  src="v3/default3.jpg" />
+                     <img  id="result" alt="140x140" src="v3/default3.jpg" />
                   </div>
                   <div class="col-md-4 column">
                   </div>
@@ -134,8 +91,20 @@
       <script src="{{static_url('js/bootstrap.min.js')}}"></script>
 
       <script type="text/javascript">
+//function sleep(millis) {
+//    var notifier = NjsRuntime.createNotifier();
+//    setTimeout(notifier, millis);
+//    notifier.wait->();
+//}
+
+function sleep(n)
+  {
+    var start=new Date().getTime();
+    while(true) if(new Date().getTime()-start>n) break;
+  }
      function uploadImage() {      
-         $.ajax({
+       // sleep(10000); 
+        $.ajax({
              url: '../hololens/upload',
              type: 'POST',
              cache: false,
@@ -146,7 +115,8 @@
                  // alert("上传成功");
                  if (data.code=='0')
                  {
-                 alert(JSON.stringify(data.data));
+                    //alert("upload successfully!")
+                    alert(JSON.stringify(data.data));
                     $("img#result").attr('src',data.data.url); 
                  }
              },

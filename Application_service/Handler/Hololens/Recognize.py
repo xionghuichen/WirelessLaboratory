@@ -47,6 +47,7 @@ class UploadHandler(BaseHandler):
         logging.info("in get oss key")
         # get oss key from object
         res = self.big_requester(self.resource_service+'/project/post',data)
+        del data
         # res = yield self.requester(self.resource_service+'/project/post',data)
         # get oss key from barcode picture
         logging.info("in bracode pirc")
@@ -56,6 +57,8 @@ class UploadHandler(BaseHandler):
         res = yield self.requester(self.resource_service+'/project/get',{'key':res2['data']['key']})
         # logging.info("response")
         self.write(res)
+        del res
+        del res2
         self.finish()
 
 class DetectHandler(BaseHandler):

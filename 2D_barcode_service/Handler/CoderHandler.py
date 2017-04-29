@@ -39,13 +39,16 @@ class DecoderHandler(CoderHandler):
         message_mapping = [
         ]
         result = ReturnStruct()
+        logging.info("before get base64,time %s"%(datetime.datetime.now()))
         pic = self.get_argument("picture_base64")
+        logging.info("before decode 64")
         if pic == '':
             raise ArgumentTypeError("empty picture_base64")
         try:
             binary_picture = base64.b64decode(pic)
         except TypeError as e:
             raise ArgumentTypeError('error change type : picture_base64')
+        logging.info("before decoder %s"%(datetime.datetime.now()))
         try:
             result.data['info'] = self._decoder(binary_picture)
         except Exception as e:

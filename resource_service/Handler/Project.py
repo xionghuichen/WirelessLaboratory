@@ -30,6 +30,7 @@ class UploadHandler(ProjectHandler):
     @tornado.web.asynchronous
     @tornado.gen.coroutine
     def post(self):
+	logging.info("in post upload")
         """
             user_id:
             pro_id:
@@ -46,6 +47,7 @@ class UploadHandler(ProjectHandler):
         name = self.get_argument('filename')
         try:
             binary_picture = base64.b64decode(file)
+            del file
         except TypeError as e:
             raise ArgumentTypeError('upload project picture')
         logging.info("in uploading resource...")
@@ -56,6 +58,7 @@ class UploadHandler(ProjectHandler):
         else:
             result.code = 1
         logging.info("after upload. result code is %s "%result.code)
+        del binary_picture
         self.return_to_client(result)
         self.finish()
 

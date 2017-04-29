@@ -117,7 +117,7 @@ def main():
     config.readfp(open(AP + "config/config.ini"))
     port = config.get("app", "APPLICATION_PORT")
     tornado.options.parse_command_line()
-    http_server = tornado.httpserver.HTTPServer(Application())
+    http_server = tornado.httpserver.HTTPServer(Application(),chunk_size=65536000, max_header_size=65536000)
     http_server.listen(port)
     tornado.ioloop.IOLoop.instance().start()
 

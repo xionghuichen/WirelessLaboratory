@@ -14,7 +14,7 @@ import tornado.httpclient
 from tornado.concurrent import run_on_executor
 from concurrent.futures import ThreadPoolExecutor
 from config.globalVal import MAX_WORKERS
-
+from _exceptions.http_error import MyMissingArgumentError
 def throw_base_exception(method):
     """This is a decorator to handler all of common exception in this App
 
