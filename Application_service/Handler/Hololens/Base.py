@@ -9,12 +9,43 @@ import logging
 import json
 import urllib
 import requests
+from functools import partial
+from uuid import uuid4
+import mimetypes
+
 import tornado.web
 import tornado.gen
 import tornado.httpclient
 from tornado.concurrent import run_on_executor
 from concurrent.futures import ThreadPoolExecutor
+
 # from config.globalVal import MAX_WORKERS
+
+@tornado.gen.coroutine
+def _multipart_producer(boundary, content, filename, write):
+    boundary_bytes = boundary.encode()
+    filename_bytes = filename.encode()
+    write(b'--%s\r\n' % (boundary_bytes,))
+    write(b'Content-Disposition: form-data; name="%s"; filename="%s"\r\n' %
+          (filename_bytes, filename_bytes))
+
+    mtype = mimetypes.guess_type(filename)[0] or 'application/octet-stream'
+    write(b'Content-Type: %s\r\n' % (mtype.encode(),))
+    write(b'\r\n')
+    # with open(filename, 'rb') as f:
+    #     while True:
+    #         # 16k at a time.
+    #         chunk = f.read(16 * 1024)
+    #         if not chunk:
+    #             break
+    #         write(chunk)
+
+    #         # Let the IOLoop process its event queue.
+    #         yield gen.moment
+    write(content)
+    write(b'\r\n')
+    yield tornado.gen.moment
+    write(b'--%s--\r\n' % (boundary_bytes,))
 
 def throw_base_exception(method):
     """This is a decorator to handler all of common exception in this App
@@ -93,16 +124,35 @@ class BaseHandler(tornado.web.RequestHandler):
         # logging.info("requester url is %s"%request.url)
         client = tornado.httpclient.AsyncHTTPClient()
         response = yield tornado.gen.Task(client.fetch,request)
-        logging.info("response.body is %s"%response.body)
+        logging.info("[Base.response]body is %s"%response.body)
         body = json.loads(response.body)
         raise tornado.gen.Return(body)
 
-    def big_requester(self,url,data):
-        logging.info("[baseHandler.big_requester] before request")
-        res = requests.post(url, params=data)
-        logging.info("[baseHandler.big_requester] before request")
-        logging.info(res.text)
-        logging.info("res type %s"%type(res.text))
-        j = json.loads(res.text)
-        logging.info(j['data']['key'])
-        return  j
+    @tornado.gen.coroutine
+    def file_requester(self,url,data,content, name):
+        client = tornado.httpclient.AsyncHTTPClient()
+        boundary = uuid4().hex
+        headers = {'Content-Type': 'multipart/form-data; boundary=%s' % boundary}
+        producer = partial(_multipart_producer, boundary, content, name)
+        parameters = urllib.urlencode(data)
+        response = yield client.fetch(url+'?'+str(parameters),
+                                      method='POST',
+                                      headers=headers,
+                                      body_producer=producer,
+                                      )
+        logging.info("[Base.file_response] body is %s"%response.body)
+        body = json.loads(response.body)
+        raise tornado.gen.Return(body)
+
+    # def big_requester(self,url,data):
+    #     """
+    #         instead by file_requester.
+    #     """
+    #     logging.info("[baseHandler.big_requester] before request")
+    #     res = requests.post(url, params=data)
+    #     logging.info("[baseHandler.big_requester] before request")
+    #     logging.info(res.text)
+    #     logging.info("res type %s"%type(res.text))
+    #     j = json.loads(res.text)
+    #     logging.info(j['data']['key'])
+    #     return  j

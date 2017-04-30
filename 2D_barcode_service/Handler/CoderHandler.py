@@ -121,8 +121,6 @@ class EncoderHandler(CoderHandler):
         information = self.get_argument("information")
         user_id = self.get_argument('user_id')
         pro_id = self.get_argument('pro_id')
-
-        logging.info("in there")
         result = ReturnStruct()
         try:
             if information == '':
@@ -136,10 +134,8 @@ class EncoderHandler(CoderHandler):
             data = {
                 'user_id':user_id,
                 'pro_id':pro_id,
-                'file':base64.b64encode(binary),
-                'filename':'.png'
             }
-            res = yield self.requester(self.resource_service+'/project/post',data)
+            res = yield self.file_requester(self.resource_service+'/project/post', data, binary,'.png')
             result.data['key']=res['data']['key']
         except Exception as e:
             raise InnerError(str(e)+"in encoder")
@@ -165,7 +161,7 @@ class EncoderHandler(CoderHandler):
         )  
         qr.add_data(information)
         qr.make(fit=True)  
-        path = AP+self.servicename+'/'+'static/encoder/'+self._file_name_creator()
+        path = AP+self.servicename+'/static/encoder/'+self._file_name_creator()
         img = qr.make_image()  
         img.save(path)  
         with open(path, 'rb') as f:  

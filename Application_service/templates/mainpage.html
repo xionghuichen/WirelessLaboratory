@@ -113,11 +113,14 @@ function sleep(n)
              contentType: false,
              success: function(data) {
                  // alert("上传成功");
-                 if (data.code=='0')
+                 alert(JSON.stringify(data));
+                 if (data.code!='2')
                  {
                     //alert("upload successfully!")
-                    alert(JSON.stringify(data.data));
                     $("img#result").attr('src',data.data.url); 
+                 }
+                 else{
+                    alert(JSON.stringify(data));
                  }
              },
              error: function(XMLHttpRequest, textStatus, errorThrown) {

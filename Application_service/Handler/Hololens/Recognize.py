@@ -30,7 +30,6 @@ class UploadHandler(BaseHandler):
         #usernmae = self.get_argument("username")
         file_metas=self.request.files['image']   #提取表单中‘name’为‘file’的文件元数据
         logging.info("in recognize, upload is %s"%self.request)
-	binaty =''
         # user_id = self.get_argument('user_id')
         # pro_id = self.get_argument('pro_id')
         # file = self.get_argument('file')
@@ -41,24 +40,19 @@ class UploadHandler(BaseHandler):
         data = {
             'user_id':'1',
             'pro_id':'1',
-            'file':base64.b64encode(binary),
-            'filename':name
         }
         logging.info("in get oss key")
         # get oss key from object
-        res = self.big_requester(self.resource_service+'/project/post',data)
-        del data
+        res =yield self.file_requester(self.resource_service+'/project/post', data, binary, name)
         # res = yield self.requester(self.resource_service+'/project/post',data)
         # get oss key from barcode picture
-        logging.info("in bracode pirc")
+        logging.info("in bracode pic")
         res2 = yield self.requester(self.barcode_service+'/encode',{'information':res['data']['key'],'user_id':'1','pro_id':'1','filename':name})
         # get url from key.
         logging.info("in get url")
         res = yield self.requester(self.resource_service+'/project/get',{'key':res2['data']['key']})
         # logging.info("response")
         self.write(res)
-        del res
-        del res2
         self.finish()
 
 class DetectHandler(BaseHandler):
@@ -84,3 +78,12 @@ class DetectHandler(BaseHandler):
         self.write(res['data']['url'])
 	# self.write(res)
         self.finish()
+
+# class RedirectHandler(BaseHandler):
+#     def __init__(self, *argc, **argkw):
+#         super(RedirectHandler, self).__init__(*argc, **argkw)    
+
+#     @tornado.web.asynchronous
+#     @tornado.gen.engine
+#     def post(self):
+#         self.get_argument('file')

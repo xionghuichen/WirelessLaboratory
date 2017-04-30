@@ -21,7 +21,8 @@ class OSSCoreModel(object):
     def register_bucket(self,bucket_name):
         self.ali_bucket = oss2.Bucket(self.auth, self.endpoint, bucket_name)
 
-    def upload_resrouce(self,key,binary_picture):
+
+    def upload_resource(self,key,binary_picture):
         """Upload single picture to OSS databases.
 
         Args:
@@ -50,3 +51,8 @@ class OSSCoreModel(object):
 
     def get_url(self,key):
         return self.ali_bucket.sign_url('GET', key, self._sign_time)
+
+    def check_exist(self,key):
+        """return bool
+        """
+        return self.ali_bucket.object_exists(key)

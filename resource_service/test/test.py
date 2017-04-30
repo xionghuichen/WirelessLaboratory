@@ -64,14 +64,14 @@ def geturl(data):
     return the_page    
 
 def test_upload():
-    with open('encoder.png','rb') as f:
+    with open('video2','rb') as f:
         content = f.read()
         b64 = base64.b64encode(content)
-        print b64
         data = {
             'file':b64,
             'user_id':123,
             'pro_id':12,
+            'filename':'test'+str(random.randint(0,1000))
         }
         data = upload(data)
         print data
@@ -88,6 +88,24 @@ def test_upload():
     # file = open('encoder.png','wb')
     # file.write(bin_pic)
 
+def redirect(data):
+    req = set_resquest("/project/redirect",data,"GET")
+    response = urllib2.urlopen(req)
+    the_page = response.read()
+    return the_page 
 
 if __name__ == '__main__':
-    test_upload()
+    # test_upload()
+    # data = {
+    #     'key':'123:122017-04-30 19:21:32.770576encoder.png'
+    # }
+    # print geturl(data)
+    # data = {
+    #     'key':'123:122017-04-30 19:21:19.569067video2'
+    # }
+    # print geturl(data)
+
+    # data = {
+    #     'key':'123:122017-04-30 20:17:35.342893video2'
+    # }
+    # print geturl(data)

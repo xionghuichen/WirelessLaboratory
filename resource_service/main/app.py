@@ -32,9 +32,10 @@ import tornado.ioloop
 from tornado.options import define, options
 
 from config.globalVal import AP
+service_path = AP+'resource_service/'
 from Handler import Project, Index
 
-define("host", default="139.196.207.155", help="community database host")
+define("host", default="127.0.0.1", help="community database host")
 define("mysql_database", default="cloudeye",
        help="community database name")
 define("mysql_user", default="root", help="community mysql user")
@@ -53,22 +54,26 @@ class Application(tornado.web.Application):
         config.readfp(open(AP + "config/config.ini"))
         ALIYUN_KEY = config.get("app","ALIYUN_KEY")
         ALIYUN_SECRET = config.get("app","ALIYUN_SECRET")
-        template_path = os.path.join(AP + "templates")
-        static_path = os.path.join(AP + "static")
+        template_path = os.path.join(service_path + "templates")
+        self.static_path = os.path.join(service_path + "static")
         logging.info("start server.")
         version=config.get("app","RESOURCE_VERSION")
         service = config.get("app","RESOURCE_NAME")
-        prefix = version+service
+        self.prefix = version+service
+        self.host = options.host
+        self.port = config.get("app","RESOURCE_PORT")
         settings = dict(
             xsrf_cookies=False,
+            static_path=self.static_path
         )
 
         handlers = [
             # test
 
-            (r''+prefix+'/',Index.IndexHandler),
-            (r''+prefix+'/project/post',Project.UploadHandler),
-            (r''+prefix+'/project/get',Project.GetUrlHandler),
+            (r''+self.prefix+'/',Index.IndexHandler),
+            (r''+self.prefix+'/project/post',Project.UploadHandler),
+            (r''+self.prefix+'/project/get',Project.GetUrlHandler),
+            (r''+self.prefix+'/project/redirect',Project.RedirectHandler),
 
         ]
 

@@ -67,7 +67,7 @@ class Application(tornado.web.Application):
         logging.info("start server.")
         version= config.get("app", "APPLICATION_VERSION")
         service = config.get("app", "APPLICATION_NAME")
-        prefix = version+service
+        self.prefix = version+service
         settings = dict(
             cookie_secret=COOKIE_SECRET,
             xsrf_cookies=False,
@@ -77,11 +77,11 @@ class Application(tornado.web.Application):
 
         handlers = [
             # test
-            (r''+prefix+'/',IndexTest.IndexHandler),
-            (r''+prefix+'/web/index', Index.IndexPageHandler),
-            (r''+prefix+'/web/main',MainPage.IndexHandler),
-            (r''+prefix+'/hololens/upload',Recognize.UploadHandler),
-            (r''+prefix+'/hololens/detect',Recognize.DetectHandler)
+            (r''+self.prefix+'/',IndexTest.IndexHandler),
+            (r''+self.prefix+'/web/index', Index.IndexPageHandler),
+            (r''+self.prefix+'/web/main',MainPage.IndexHandler),
+            (r''+self.prefix+'/hololens/upload',Recognize.UploadHandler),
+            (r''+self.prefix+'/hololens/detect',Recognize.DetectHandler)
         ]
 
         tornado.web.Application.__init__(self, handlers, **settings)
