@@ -19,6 +19,7 @@ import tornado.httpclient
 from tornado.concurrent import run_on_executor
 from concurrent.futures import ThreadPoolExecutor
 
+from Models.KeyInfo import KeyInfoModel
 # from config.globalVal import MAX_WORKERS
 
 @tornado.gen.coroutine
@@ -69,7 +70,8 @@ class BaseHandler(tornado.web.RequestHandler):
         para = {} 
         self.barcode_service = self.application.barcode_service_url
         self.resource_service = self.application.resource_service_url
-
+        para['mongodb'] = self.application.mongodb 
+        self.key_info_model = KeyInfoModel(**para)
     # @run_on_executor
     # def background_task(self,function,*argc):
     #     return function(*argc)

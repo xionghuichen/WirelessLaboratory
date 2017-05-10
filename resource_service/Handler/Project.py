@@ -72,7 +72,7 @@ class UploadHandler(ProjectHandler):
         up_result =yield self.background_task(self._picture_model.upload_resource,key,body)
         if up_result:
             del body
-            logging.info("after upload file %s. result code is %s "%(key,result.code))
+            logging.info("after upload file key:%s. result code is %s "%(key,result.code))
             os.remove(file_dir)
 
 

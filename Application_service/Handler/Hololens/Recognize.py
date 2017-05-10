@@ -28,7 +28,9 @@ class UploadHandler(BaseHandler):
     @tornado.gen.engine
     def post(self):
         #usernmae = self.get_argument("username")
-        file_metas=self.request.files['image']   #提取表单中‘name’为‘file’的文件元数据
+        logging.info("[Hololens.Recognize] %s"%self.get_argument('type'))
+        upload_type = self.get_argument('type')
+        file_metas=self.request.files['main_model']   #提取表单中‘name’为‘file’的文件元数据
         logging.info("in recognize, upload is %s"%self.request)
         # user_id = self.get_argument('user_id')
         # pro_id = self.get_argument('pro_id')
@@ -44,10 +46,12 @@ class UploadHandler(BaseHandler):
         logging.info("in get oss key")
         # get oss key from object
         res =yield self.file_requester(self.resource_service+'/project/post', data, binary, name)
+        key = res['data']['key']
+        self.key_info_model.insert_new_key(key,upload_type)
         # res = yield self.requester(self.resource_service+'/project/post',data)
         # get oss key from barcode picture
         logging.info("in bracode pic")
-        res2 = yield self.requester(self.barcode_service+'/encode',{'information':res['data']['key'],'user_id':'1','pro_id':'1','filename':name})
+        res2 = yield self.requester(self.barcode_service+'/encode',{'information':key,'user_id':'1','pro_id':'1','filename':name})
         # get url from key.
         logging.info("in get url")
         res = yield self.requester(self.resource_service+'/project/get',{'key':res2['data']['key']})
@@ -73,9 +77,11 @@ class DetectHandler(BaseHandler):
 
         res2 = yield self.requester(self.barcode_service+'/decode',{'picture_base64':b64_pic})
         key = res2['data']['info']
+        info = self.key_info_model.find_key(key)
+        logging.info("[hololens.detect] info is %s"%info)
         # get url from key.
         res = yield self.requester(self.resource_service+'/project/get',{'key':key})
-        self.write(res['data']['url'])
+        self.write(info['type']+res['data']['url'])
 	# self.write(res)
         self.finish()
 

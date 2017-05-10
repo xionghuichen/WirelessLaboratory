@@ -3,7 +3,7 @@
 
 # Author      :   Xionghui Chen
 # Created     :   2017.3.27
-# Modified    :   2017.3.27
+# Modified    :   2017.5.10
 # Version     :   1.0
 # app.py
 import sys
@@ -22,7 +22,6 @@ sys.path.append(location)
 import ConfigParser
 import logging
 import oss2
-import redis
 
 import tornado.web
 import tornado.httpserver
@@ -48,8 +47,9 @@ define("mysql_database", default="cloudeye",
 define("mysql_user", default="root", help="community mysql user")
 define("mysql_password", default="zp19950310",
        help="community database password")
-define("mongo_user",default="burningbear", help="community mongodb  user")
-define("mongo_password",default='zp19950310',help="commuity mongodb password")
+define("mongo_host", help="community mongodb  host")
+define("mongo_user", help="community mongodb  user")
+define("mongo_password",help="commuity mongodb password")
 logging.basicConfig(level=logging.INFO)
                     #filename='log.log',
                     #filemode='w')
@@ -99,9 +99,9 @@ class Application(tornado.web.Application):
         # base_model.metadata.create_all(engine) 
         # use pymongo to connectino to mongodb
         logging.info("connect mongodb ..")
-        # client = pymongo.MongoClient(options.host,27017)
-        # client.cloudeye.authenticate(options.mongo_user,options.mongo_password)
-        # self.mongodb = client.cloudeye
+        client = pymongo.MongoClient(options.mongo_host,27017)
+        client.hololens.authenticate(options.mongo_user,options.mongo_password)
+        self.mongodb = client.hololens
         # bind face++ cloud service
         logging.info("connect mongodb successfully..")
         # bind micro service
