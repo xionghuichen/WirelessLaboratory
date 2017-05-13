@@ -37,6 +37,9 @@
           <li>
              <a href="#panel-3" data-toggle="tab">Interactive Model</a>
           </li>
+          <li>
+             <a href="#panel-4" data-toggle="tab">Virtual Environment </a>
+          </li>
       </ul>
             <div class="row clearfix">
                 <div class="col-md-6 column">
@@ -80,11 +83,32 @@
                       <div class="tab-pane" id="panel-3">
                         <p>Please upload the Interactive Model you want to display in Hololens.</p>
                         <form id="uploadForm3" enctype="multipart/form-data">
-                            <h4> upload Interactive Model</h4>
+                            <h4> Upload Interactive Model</h4>
                             <input id="file3" type="file" name="main_model"/>
+                            <h4>Select Method:</h4>
+                            <select id="method"> 
+                              <option value="0" id="optionvalue">Clockwise</option> 
+                              <option value="1">Counterclockwise</option> 
+                            </select> 
+                            </br>
                             <button id="upload" type="button" onclick="uploadImage(3)">upload</button>
                         </form>                  
                       </div>
+                      <div class="tab-pane" id="panel-4">
+                        <p>Please upload the Interactive Model you want to display in Hololens.</p>
+                        <form id="uploadForm4" >
+                            <h4> Upload Interactive Model</h4>
+                            <input id="file3" type="file" name="main_model"/>
+                            <h4>Select Method:</h4>
+                            <select id="method"> 
+                              <option value="0" id="optionvalue">Clockwise</option> 
+                              <option value="1">Counterclockwise</option> 
+                            </select> 
+                            </br>
+                            <button id="upload" type="button" onclick="uploadImage(3)">upload</button>
+                        </form>                  
+                      </div>
+
                     </div>
                  </div>
                   <div class="col-md-6 column">
@@ -129,40 +153,47 @@
            });
         });
     
-    function sleep(n)
+      function sleep(n)
       {
         var start=new Date().getTime();
         while(true) if(new Date().getTime()-start>n) break;
       }
+      
+     function uploadImage(upload_type) {      
+       // sleep(10000); 
+       para = 'type='+upload_type+'&count='+count;
+       if(upload_type == 3){
+         oListbox = document.getElementById("method");   
+         method = oListbox.options[oListbox.selectedIndex].value;
+         para = para+'&method='+method;
+       }
+        $.ajax({
+             url: '../hololens/upload?type='+para,
+             type: 'POST',
+             cache: false,
+             data: new FormData($('#uploadForm'+upload_type)[0]),
+             processData: false,
+             contentType: false,
+             success: function(data) {
+                 // alert("上传成功");
+                 alert(JSON.stringify(data));
+                 if (data.code!='2')
+                 {
+                    //alert("upload successfully!")
+                    $("img#result").attr('src',data.data.url); 
+                 }
+                 else{
+                    alert(JSON.stringify(data));
+                 }
+             },
+             error: function(XMLHttpRequest, textStatus, errorThrown) {
+                 alert("上传失败，请检查网络后重试");
+             }          
+         }).done(function(res) {
+         }).fail(function(res) {
+         });
+      }
 
-         function uploadImage(upload_type) {      
-           // sleep(10000); 
-            $.ajax({
-                 url: '../hololens/upload?type='+upload_type+'&count='+count,
-                 type: 'POST',
-                 cache: false,
-                 data: new FormData($('#uploadForm'+upload_type)[0]),
-                 processData: false,
-                 contentType: false,
-                 success: function(data) {
-                     // alert("上传成功");
-                     alert(JSON.stringify(data));
-                     if (data.code!='2')
-                     {
-                        //alert("upload successfully!")
-                        $("img#result").attr('src',data.data.url); 
-                     }
-                     else{
-                        alert(JSON.stringify(data));
-                     }
-                 },
-                 error: function(XMLHttpRequest, textStatus, errorThrown) {
-                     alert("上传失败，请检查网络后重试");
-                 }          
-             }).done(function(res) {
-             }).fail(function(res) {
-             });
-          }
         // function uploadImage() {
         // //判断是否有选择上传文件
         //     var imgPath = $("#uploadFile").val();

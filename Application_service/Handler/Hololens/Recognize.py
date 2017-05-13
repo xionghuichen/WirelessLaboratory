@@ -47,7 +47,11 @@ class UploadHandler(BaseHandler):
         # get oss key from object
         res =yield self.file_requester(self.resource_service+'/project/post', data, binary, name)
         key = res['data']['key']
-        self.key_info_model.insert_new_key(key,upload_type)
+        if upload_type == '3':
+            para = {
+                'method':self.get_argument('method')
+            }
+        self.key_info_model.insert_new_key(key,upload_type,para)
         # res = yield self.requester(self.resource_service+'/project/post',data)
         # get oss key from barcode picture
         logging.info("in bracode pic")
@@ -81,7 +85,10 @@ class DetectHandler(BaseHandler):
         logging.info("[hololens.detect] info is %s"%info)
         # get url from key.
         res = yield self.requester(self.resource_service+'/project/get',{'key':key})
-        self.write(info['type']+res['data']['url'])
+        prefix = info['type']
+        if prefix == '3':
+            prefix = prefix + info['method'] 
+        self.write(prefix+res['data']['url'])
 	# self.write(res)
         self.finish()
 

@@ -18,6 +18,8 @@ class KeyInfoModel(BaseModel):
             'key':key,
             'type':type
         }
+        if type == '3':
+            info_data['method']=other['method']
         return self.mongodb.key.info.insert_one(info_data).inserted_id
 
     def find_key(self,key):

@@ -54,7 +54,7 @@ def detect(data):
     return the_page
 
 def test_detect():
-    with open('add_type.png','rb') as f:
+    with open('add_method.png','rb') as f:
         content = f.read()
         b64 = base64.b64encode(content)
         data = {
