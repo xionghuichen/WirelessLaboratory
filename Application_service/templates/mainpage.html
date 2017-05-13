@@ -38,7 +38,7 @@
              <a href="#panel-3" data-toggle="tab">Interactive Model</a>
           </li>
           <li>
-             <a href="#panel-4" data-toggle="tab">Virtual Environment </a>
+             <a href="#panel-4" data-toggle="tab">Virtual Environment Special Effects</a>
           </li>
       </ul>
             <div class="row clearfix">
@@ -94,18 +94,17 @@
                             <button id="upload" type="button" onclick="uploadImage(3)">upload</button>
                         </form>                  
                       </div>
+
                       <div class="tab-pane" id="panel-4">
-                        <p>Please upload the Interactive Model you want to display in Hololens.</p>
+                        <p>Please upload the Special Effects you want to display in Hololens.</p>
                         <form id="uploadForm4" >
-                            <h4> Upload Interactive Model</h4>
-                            <input id="file3" type="file" name="main_model"/>
-                            <h4>Select Method:</h4>
-                            <select id="method"> 
-                              <option value="0" id="optionvalue">Clockwise</option> 
-                              <option value="1">Counterclockwise</option> 
+                            <h4>Select Special Effects Method:</h4>
+                            <select id="special_effect_method"> 
+                              <option value="0" id="optionvalue">Rainbow</option> 
+                              <option value="1">Starry Sky</option> 
                             </select> 
                             </br>
-                            <button id="upload" type="button" onclick="uploadImage(3)">upload</button>
+                            <button id="upload" type="button" onclick="uploadImage(4)">upload</button>
                         </form>                  
                       </div>
 
@@ -158,15 +157,45 @@
         var start=new Date().getTime();
         while(true) if(new Date().getTime()-start>n) break;
       }
-      
+
      function uploadImage(upload_type) {      
        // sleep(10000); 
        para = 'type='+upload_type+'&count='+count;
+       if(upload_type == 1){
+          para = para + '&count='+count;
+       }
        if(upload_type == 3){
          oListbox = document.getElementById("method");   
          method = oListbox.options[oListbox.selectedIndex].value;
          para = para+'&method='+method;
        }
+       if(upload_type==4){
+         oListbox = document.getElementById("special_effect_method");   
+         method = oListbox.options[oListbox.selectedIndex].value;
+         para = para+'&special_effect_method='+method;
+         $.ajax({
+             url: '../hololens/upload?'+para,
+             type: 'POST',
+             success: function(data) {
+                 // alert("上传成功");
+                 alert(JSON.stringify(data));
+                 if (data.code!='2')
+                 {
+                    //alert("upload successfully!")
+                    $("img#result").attr('src',data.data.url); 
+                 }
+                 else{
+                    alert(JSON.stringify(data));
+                 }
+             },
+             error: function(XMLHttpRequest, textStatus, errorThrown) {
+                 alert("上传失败，请检查网络后重试");
+             }          
+         }).done(function(res) {
+         }).fail(function(res) {
+         });
+       }
+       else
         $.ajax({
              url: '../hololens/upload?type='+para,
              type: 'POST',
