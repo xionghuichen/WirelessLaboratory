@@ -58,7 +58,7 @@
                                     <input type="button" id="btnUpload" value="确定" onclick="uploadImage()" />
                                  </form> -->
                         <p>Please upload the model you want to display in Hololens.</p>
-                        <form id="uploadForm" enctype="multipart/form-data">
+                        <form id="uploadForm1" enctype="multipart/form-data">
             		            <h4> upload village model</h4> 
                             <input id="file1" type="file" name="main_model"/>
                             <br></br>
@@ -73,7 +73,7 @@
                         <p>Please upload the Interactive Video you want to display in Hololens.</p>
                         <form id="uploadForm2" enctype="multipart/form-data">
                             <h4> upload Interactive Video</h4>
-                            <input id="file1" type="file" name="main_model"/>
+                            <input id="file2" type="file" name="main_model"/>
                             <button id="upload" type="button" onclick="uploadImage(2)">upload</button>
                         </form>                  
                       </div>
@@ -81,7 +81,7 @@
                         <p>Please upload the Interactive Model you want to display in Hololens.</p>
                         <form id="uploadForm3" enctype="multipart/form-data">
                             <h4> upload Interactive Model</h4>
-                            <input id="file2" type="file" name="main_model"/>
+                            <input id="file3" type="file" name="main_model"/>
                             <button id="upload" type="button" onclick="uploadImage(3)">upload</button>
                         </form>                  
                       </div>
@@ -141,7 +141,7 @@
                  url: '../hololens/upload?type='+upload_type+'&count='+count,
                  type: 'POST',
                  cache: false,
-                 data: new FormData($('#uploadForm')[0]),
+                 data: new FormData($('#uploadForm'+upload_type)[0]),
                  processData: false,
                  contentType: false,
                  success: function(data) {
